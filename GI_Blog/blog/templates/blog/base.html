@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+ <link rel="icon" href="\media\icon.png">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+  <!-- Medium Editor -->
+  <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css"
+    type="text/css" media="screen" charset="utf-8">
+
+  <!-- Custom Style -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+
+  {% if title %}
+  <title>{{ title }}</title>
+  {% else %}
+  <title>Django Blog</title>
+  {% endif %}
+</head>
+
+<body style="background-color :#f1edf5;">
+  <header class="site-header">
+    <nav class="navbar navbar-light  fixed-top" style="background-color  :#4c2b50;"  >
+    <div class="container-fluid" >
+       <button class="navbar-toggler text-white bg-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+        <span class="navbar-toggler-icon " style="font-color  :#ffffff;"></span>
+      </button>
+      &nbsp;
+      <a href="{% url 'index' %}"><img   style="max-width :250px ;max-height :50px ;" src= "\media\gi-blog2.png" ></a>
+
+        <form class="d-flex" action="{% url 'search' %}" method="GET">
+              <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search" style="max-width :200px ;" />&nbsp;
+             <input class="btn btn-primary" style="background-color  :#ffffff; border-color  :#4c2b50; color:#4c2b50;" type="submit" value="Search">
+         </form>
+
+
+      <div class="offcanvas offcanvas-start text-white" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="background-color  :#4c2b50;">
+        <div class="offcanvas-header">
+          {% if user.is_authenticated %}
+          <h5 class="offcanvas-title text-white c-flex " id="offcanvasNavbarLabel">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <img class="rounded-circle " style="max-width :50px ;"src="{{ user.profile.image.url }}">
+            {{user.username}}
+          </h5>
+          {% else %}
+          <h5 class="offcanvas-title text-white c-flex " id="offcanvasNavbarLabel">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             <a href="{% url 'index' %}"><img   style="max-width :200px ;max-height :30px ;" src= "\media\gi-blog2.png" ></a></h5>
+          {% endif %}
+          <button type="button" class="btn-close text-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+
+             {% if user.is_authenticated %}
+             <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'post_create' %}">New Post</a></li>
+
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'profile' %}">Profile</a></li>
+
+            <li><a class="nav-item nav-link text-success" href="{% url 'logout' %}"  >Logout</a></li>
+
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'user_posts' user.username %}">My Posts</a></li>
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'trending'  %}">Trending</a></li>
+
+                {% if user.id == 1 %}
+                 <li class="nav-item"><a class="nav-item nav-link text-white" href="/admin">Admin Page</a></li>
+                <li class="nav-item"><a class="nav-item nav-link text-yellow" href="{% url 'cat_create'  %}">Add Categorie</a></li>
+                {% endif %}
+            {% else %}
+
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'trending'  %}">Trending</a></li>
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'login' %}">Login</a></li>
+
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'register' %}">Register</a></li>
+
+
+            {% endif %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Categories
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="offcanvasNavbarDropdown">
+                {% block list %}
+                {% endblock  %}
+              </ul>
+            </li>
+            <li class="nav-item"><a class="nav-item nav-link text-white" href="{% url 'about' %}">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</nav>
+    </br>
+    </br>
+    </br>
+
+
+
+
+<!-- Medium Editor -->
+
+
+
+<!-- Modal -->
+
+
+
+
+
+
+
+
+
+  </header>
+  <main role="main" class="container" style="max-width :60% ;">
+    <div class="row">
+      <div class="col-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+      </div>
+
+
+
+        </div>
+      </div>
+
+
+    </div>
+  </main>
+
+  <footer class="py-5  " style="background-color  :#4c2b50;">
+      <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Blog 2022</p></div>
+  </footer>
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+
+
+  <!-- Optional JavaScript -->
+  <script src="{% static 'js/main.js' %}"></script>
+
+  <script src="{% static 'js/bootstrap.js' %}"></script>
+<script>
+    function singlePost(PostId) {
+    let path = "post/" + PostId + "/";
+    location.replace(path);
+    }
+</script>
+</body>
+
+</html>
+

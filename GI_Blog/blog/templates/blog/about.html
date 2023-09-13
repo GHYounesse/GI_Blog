@@ -1,0 +1,38 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<article class="media content-section  "  style="border-color  :#4c2b50;" >
+
+          <div class="media-body ">
+            <div class="article-metadata ">
+                <h2><a class="article-title" >About</a></h2>
+
+
+            </div>
+            <p class="article-content">GI-Blog est l'endroit où vos passions vous connectent avec les autres.
+
+                <strong> Exprimez-vous.</strong>
+                GI-Blog est à vous : publiez des photos, des textes, etc. Il n'y a aucune limite à la création !
+
+                <strong> Soyez vous-même.</strong>
+                Ayez un look unique : personnalisez votre GI-Blog en changeant les couleurs, les polices de caractères, la mise en page... Tout est possible ! Suivez les sujets qui vous passionnent. Faites preuve de curiosité et découvrez des choses surprenantes.
+
+                <strong>Établissez des liens.</strong>
+                Rejoignez des millions de personnes à travers des millions de communautés réunies autour de millions de #tags. Un coup de cœur ? Rebloguez le contenu qui vous a tapé dans l'œil sur votre GI-Blog et ajoutez-y un commentaire pour démarrer une conversation. Vous pouvez aussi vous contenter d'admirer en silence les GI-Bloggers qui vous plaisent ; aucun problème.
+
+                GI-Blog est un univers à part entière.
+
+                <strong>Explorez-le !</strong>
+                 N'hésitez pas à nous contacter pour toute question complémentaire, erreur dans le fonctionnement du site ou remarque sur une information manquante.
+                <div class="text-center">
+                <a class="btn btn-outline-info " style="background-color  :#4c2b50; border-color  :#4c2b50;color:#ffffff;"href="{% url 'contact'%}">Contactez-nous</a>
+                </div>
+            </p>
+          </div>
+        </article>
+
+{% endblock content %}
+{% block list %}
+                  {% for item in cat_list %}
+                    <li><a class="dropdown-item  " href="{% url 'cat_list' item.categorie_name %}" >{{item.categorie_name}}</a></li>
+                    {% endfor %}
+{% endblock list %}

@@ -1,0 +1,36 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section" style="border-color  :#4c2b50;">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Update Post</legend>
+            {{ form.media  }}
+            {{ form|crispy }}
+        </fieldset>
+        <div class="form-group">
+            </br>
+            <button class="btn btn-outline-info" style="background-color  :#4c2b50; border-color  :#4c2b50;color:#ffffff;" data-bs-toggle="modal" data-bs-target="#exampleModal" type="submit">Update</button>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="border-color  :#4c2b50;">
+    <div class="modal-content">
+      <div class="modal-header">
+        Your post has been updated successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content %}
+{% block list %}
+                  {% for item in cat_list %}
+                    <li><a class="dropdown-item  " href="{% url 'cat_list' item.categorie_name %}" >{{item.categorie_name}}</a></li>
+                    {% endfor %}
+{% endblock list %}

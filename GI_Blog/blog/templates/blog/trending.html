@@ -1,0 +1,63 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<!-- Search Form -->
+
+    {% for post in trend_posts %}
+        <article class="media content-section  "  style="border-color  :#4c2b50; cursor:pointer;" onclick="location.href = '{% url 'post_detail' post.id %}'" >
+          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+           <strong> <a class="mr-2 " style="text-decoration :none ;color :black ;" href="{% url 'user_posts' post.author.username %}">{{ post.author }}</a></strong>
+            <small class="text-muted">{{ post.time_published}}</small>
+            <hr>
+          <div class="media-body ">
+
+          <h2><a class="article-title" href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+              {% if post.image %}
+                <a href="{{ post.image.url }}" > <img style="max-width :50% ; display :block;margin-left:auto;margin-right:auto;" src="{{ post.image.url }}"></a>
+
+                {% endif %}
+              </br>
+            <p class="article-content">{{ post.content|safe }}</p>
+
+
+          </div>
+            <hr>
+            <form action="{% url 'like2_post' post.pk %}" method="POST">
+                {% csrf_token %}
+                {% if like %}
+                   <button type="submit" name="post_id" value="{{ post.id}}"  class=" btn-sm mt-1 mb-1 float-right mr-2 " style="background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;"> <img   style="max-width :250px ;max-height :40px ;text-decoration:none;" src= "\media\red_heart.png" > </a>
+                    </button> {{ post.total_likes }}
+                {% else %}
+                    <button type="submit" name="post_id" value="{{ post.id}}" class="btn-sm mt-1 mb-1 float-right mr-2 "style="background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;"> <img   style="max-width :250px ;max-height :40px ;text-decoration:none;" src= "\media\red_heart.png" > </a>
+               {{ post.total_likes }} </button>
+                {% endif %}
+                &nbsp;
+                   <a href="{% url 'comt_create' post.pk %}" style="text-decoration :none ;color :black ;"><img   style="max-width :250px ;max-height :30px ;" src= "\media\images__1_-removebg-preview.png" >&nbsp;Commmenter</a>
+
+            </form>
+        </article>
+    {% endfor %}
+    {% if is_paginated %}
+      {% if page_obj.has_previous %}
+        <a class="btn btn-outline-info mb-4" style="background-color  :#ffffff; border-color  :#4c2b50; color:#4c2b50;" href="?page=1">First</a>
+        <a class="btn btn-outline-info mb-4"  style="background-color  :#ffffff; border-color  :#4c2b50; color:#4c2b50;" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <a class="btn btn-info mb-4"  style="background-color  :#4c2b50; border-color  :#4c2b50;" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a class="btn btn-outline-info mb-4" style="background-color  :#ffffff; border-color  :#4c2b50; color:#4c2b50;" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a class="btn btn-outline-info mb-4" style="background-color  :#ffffff; border-color  :#4c2b50; color:#4c2b50;" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class="btn btn-outline-info mb-4"  style="background-color  :#ffffff; border-color  :#4c2b50; color:#4c2b50;" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+    {% endif %}
+{% endblock content %}
+{% block list %}
+                                        {% for item in cat_list %}
+                                        <li><a class="dropdown-item  " href="{% url 'cat_list' item.categorie_name %}" >{{item.categorie_name}}</a></li>
+                                        {% endfor %}
+{% endblock list %}
