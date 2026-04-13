@@ -1,0 +1,43 @@
+# Python
+
+**pycache**/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+
+env/
+venv/
+ENV/
+
+# Django stuff
+
+*.log
+db.sqlite3
+media/
+
+# Environment variables
+
+.env
+
+# VS Code / PyCharm
+
+.vscode/
+.idea/
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Static files
+
+staticfiles/
+
+# Migrations (optional)
+
+# */migrations/*.py
+
+# !*/migrations/**init**.py
