@@ -78,8 +78,7 @@ A full-featured blog application built with Django and Bootstrap. Supports user 
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/GHYounesse/GI_Blog.git
 ```
 
 ### 2. Create and activate a virtual environment
@@ -93,7 +92,7 @@ env\Scripts\activate           # Windows
 ### 3. Install dependencies
 
 ```bash
-pip install django psycopg2-binary pillow django-crispy-forms
+pip install -r requirements.txt
 ```
 
 ### 4. Configure the database
@@ -129,7 +128,14 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 7. Run the development server
+### 7.Create .env file
+
+```bash
+cp .env.example .env
+```
+And update the values
+
+### 8. Run the development server
 
 ```bash
 python manage.py runserver
@@ -156,37 +162,3 @@ Visit `http://127.0.0.1:8000`
 
 ---
 
-## Dependencies
-
-Once inside your virtual environment, generate a `requirements.txt` with:
-
-```bash
-pip freeze > requirements.txt
-```
-
-Core packages this project relies on:
-
-```
-django
-psycopg2-binary
-pillow
-```
-
----
-
-## Known Limitations
-
-- `delete_post` and `delete_comment` have no login or ownership check — any user who knows the URL can delete any post or comment
-- `CommentView` does not require authentication — unauthenticated users can submit comments
-- `ContactView` reuses `CommentForm` instead of a dedicated message form
-- No email notifications
-- Runs locally only — not deployed
-
----
-
-## Built With
-
-- [Django](https://www.djangoproject.com/)
-- [Bootstrap 5](https://getbootstrap.com/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Pillow](https://python-pillow.org/)

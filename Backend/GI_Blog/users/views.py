@@ -4,8 +4,10 @@ from rest_framework import status
 from .serializers import RegisterSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import UserSerializer, ProfileSerializer
-
+from .serializers import UserSerializer, ProfileSerializer, PasswordResetRequestSerializer, SetNewPasswordSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 
 @api_view(['POST'])
@@ -49,3 +51,31 @@ def profile(request):
             "user_errors": user_serializer.errors,
             "profile_errors": profile_serializer.errors
         }, status=400)
+
+
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {"message": "Password reset email sent if user exists."},
+            status=status.HTTP_200_OK
+        )
+
+
+class PasswordResetConfirmView(APIView):
+    def post(self, request, uid, token):
+        data = request.data.copy()
+        data["uid"] = uid
+        data["token"] = token
+
+        serializer = SetNewPasswordSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {"message": "Password has been reset successfully."},
+            status=status.HTTP_200_OK
+        )
