@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 from ..models.post import Post
+from ..models.notification import Notification
 from ..serializers import PostSerializer, CommentSerializer
 from ..permissions import IsAuthorOrReadOnly
 
@@ -53,6 +54,13 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response({"liked": False})
 
         post.liked.add(request.user)
+        if post.author != request.user:
+            Notification.objects.create(
+                sender=request.user,
+                receiver=post.author,
+                notification_type="like",
+                post=post
+            )
         return Response({"liked": True})
 
     # 🔥 READ LATER TOGGLE
@@ -74,6 +82,14 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(author=request.user, post=post)
+        if post.author != request.user:
+            Notification.objects.create(
+                sender=request.user,
+                receiver=post.author,
+                notification_type="comment",
+                post=post,
+                comment=comment
+            )
         return Response(serializer.data)
         # text = request.data.get("text")
         # if not text:

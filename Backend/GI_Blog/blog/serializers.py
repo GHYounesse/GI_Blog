@@ -4,6 +4,7 @@ from .models.post import Post
 from .models.comment import Comment
 from .models.categorie import Categorie
 from .models.replie import Replie
+from .models.notification import Notification
 from .models.tag import Tag
 
 class UserSerializer(serializers.ModelSerializer):
@@ -93,3 +94,19 @@ class PostSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.read_later.filter(id=request.user.id).exists()
         return False
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = [
+            "id",
+            "sender",
+            "notification_type",
+            "post",
+            "comment",
+            "is_read",
+            "created_at",
+        ]
