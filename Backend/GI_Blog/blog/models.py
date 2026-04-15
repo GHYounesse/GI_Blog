@@ -63,7 +63,7 @@ class Comment(models.Model):
         return str(self.author)
 
     def time_published(self):
-        return humanize.naturaltime(timezone.now() - self.date_posted)
+        return humanize.naturaltime(timezone.now() - self.created_date)
 
 class Replie(models.Model):
     comment = models.ForeignKey(Comment, related_name='replies', on_delete=models.CASCADE)

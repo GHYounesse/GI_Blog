@@ -1,29 +1,15 @@
-from django.urls import path
-from .views import (
-    PostListAPIView,
-    PostDetailAPIView,
-    PostCreateAPIView,
-    PostUpdateAPIView,
-    PostDeleteAPIView,
-    LikePostAPIView,
-    ReadLaterAPIView,
-    CommentCreateAPIView,
-    CategorieCreateAPIView
-)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
+from .views.post import PostViewSet
+from .views.category import CategoryViewSet
+from .views.comment import CommentViewSet
+
+router = DefaultRouter()
+router.register(r'posts', PostViewSet, basename='post')
+router.register(r'categories', CategoryViewSet, basename='category')
+router.register(r'comments', CommentViewSet, basename='comment')
 
 urlpatterns = [
-    path("categories/create/", CategorieCreateAPIView.as_view()),
-
-    path("posts/", PostListAPIView.as_view()),
-    path("posts/<int:pk>/", PostDetailAPIView.as_view()),
-    path("posts/create/", PostCreateAPIView.as_view()),
-    path("posts/<int:pk>/update/", PostUpdateAPIView.as_view()),
-    path("posts/<int:pk>/delete/", PostDeleteAPIView.as_view()),
-
-    path("posts/<int:pk>/like/", LikePostAPIView.as_view()),
-    path("posts/<int:pk>/read-later/", ReadLaterAPIView.as_view()),
-    path("posts/<int:pk>/comment/", CommentCreateAPIView.as_view()),
-
-    
+    path('', include(router.urls)),
 ]
