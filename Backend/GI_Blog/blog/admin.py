@@ -1,10 +1,21 @@
 from django.contrib import admin
 from .models import Post, Comment, Categorie
 
-admin.site.register(Post)
-admin.site.register(Comment)
-admin.site.register(Categorie)
 
-admin.site.site_header = " Admin Page"
-admin.site.site_title = "Custom bookstore admin site"
-admin.site.index_title = "Custom Bookstore Admin"
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ("title", "author", "categorie", "date_posted")
+    search_fields = ("title", "content")
+    list_filter = ("categorie", "date_posted")
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("author", "post", "created_date", "approved_comment")
+    search_fields = ("text",)
+    list_filter = ("approved_comment",)
+
+
+@admin.register(Categorie)
+class CategorieAdmin(admin.ModelAdmin):
+    list_display = ("categorie_name",)

@@ -8,7 +8,8 @@ from .serializers import UserSerializer, ProfileSerializer, PasswordResetRequest
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework import generics, permissions
+from .models import Profile
 
 @api_view(['POST'])
 def register(request):
@@ -52,6 +53,15 @@ def profile(request):
             "profile_errors": profile_serializer.errors
         }, status=400)
 
+
+class ProfileDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # each user only accesses their own profile
+        return self.request.user.profile
 
 
 class PasswordResetRequestView(APIView):
