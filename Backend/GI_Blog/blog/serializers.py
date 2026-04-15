@@ -1,6 +1,11 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Categorie,Replie,Comment,Post
+from .models.post import Post
+from .models.comment import Comment
+from .models.categorie import Categorie
+from .models.replie import Replie
+from .models.tag import Tag
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -37,6 +42,7 @@ class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     categorie = CategorySerializer(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
+    tags = serializers.StringRelatedField(many=True, read_only=True)
 
     total_likes = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
@@ -45,6 +51,12 @@ class PostSerializer(serializers.ModelSerializer):
     categorie_id = serializers.PrimaryKeyRelatedField(
         queryset=Categorie.objects.all(),
         source='categorie',
+        write_only=True
+    )
+    tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        source="tags",
+        many=True,
         write_only=True
     )
 
@@ -63,6 +75,8 @@ class PostSerializer(serializers.ModelSerializer):
             "total_likes",
             "is_liked",
             "is_read_later",
+            "tags",
+            "tag_ids",
         ]
 
     def get_total_likes(self, obj):

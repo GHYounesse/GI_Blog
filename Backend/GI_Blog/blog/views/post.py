@@ -3,13 +3,16 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from ..models import Post
+from ..models.post import Post
 from ..serializers import PostSerializer, CommentSerializer
 from ..permissions import IsAuthorOrReadOnly
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
+    filterset_fields = ["categorie", "author"]
+    ordering_fields = ["date_posted", "title"]
+    ordering = ["-date_posted"]
     serializer_class = PostSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -20,20 +23,32 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def get_queryset(self):
-        qs = Post.objects.all()
+        qs = Post.objects.select_related("author", "categorie") \
+                        .prefetch_related("comments", "liked", "read_later")
 
         q = self.request.query_params.get("q")
+        category = self.request.query_params.get("category")
+        author = self.request.query_params.get("author")
+
         if q:
-            qs = qs.filter(title__icontains=q) | qs.filter(content__icontains=q)
+            qs = qs.filter(
+                Q(title__icontains=q) |
+                Q(content__icontains=q)
+            )
 
-        return qs.select_related("author", "categorie").prefetch_related("comments")
+        if category:
+            qs = qs.filter(categorie__categorie_name__icontains=category)
 
+        if author:
+            qs = qs.filter(author__username__icontains=author)
+
+        return qs
     # 🔥 LIKE TOGGLE
     @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
     def like(self, request, pk=None):
         post = self.get_object()
-
-        if request.user in post.liked.all():
+        liked = post.liked.filter(id=request.user.id).exists()
+        if liked:
             post.liked.remove(request.user)
             return Response({"liked": False})
 
@@ -56,14 +71,24 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
     def comment(self, request, pk=None):
         post = self.get_object()
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=request.user, post=post)
+        return Response(serializer.data)
+        # text = request.data.get("text")
+        # if not text:
+        #     return Response({"error": "Text required"}, status=400)
 
-        text = request.data.get("text")
-        if not text:
-            return Response({"error": "Text required"}, status=400)
+        # comment = post.comments.create(
+        #     author=request.user,
+        #     text=text
+        # )
 
-        comment = post.comments.create(
-            author=request.user,
-            text=text
-        )
+        # return Response({"message": "Comment added", "id": comment.id})
 
-        return Response({"message": "Comment added", "id": comment.id})
+    @action(detail=True, methods=["get"])
+    def comments(self, request, pk=None):
+        post = self.get_object()
+        comments = post.comments.select_related("author").prefetch_related("replies")
+        serializer = CommentSerializer(comments, many=True, context={"request": request})
+        return Response(serializer.data)

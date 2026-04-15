@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions
-from ..models import Categorie
+from ..models.categorie import Categorie
 from ..serializers import CategorySerializer
 from ..permissions import IsAdminOrReadOnly
 
